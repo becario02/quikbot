@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Trash2, Search, FileText, ExternalLink, Download, Upload, Loader } from 'lucide-react';
 import Pagination from '../components/Pagination';
+import Modal from '../components/Modal';
+import ToastAlert from '../components/ToastAlert';
 
 const Files = () => {
   const [files, setFiles] = useState([]);
@@ -9,6 +11,13 @@ const Files = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
   const [isDeletingFile, setIsDeletingFile] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState(null);
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    variant: 'info'
+  });
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +25,18 @@ const Files = () => {
   const [totalFiles, setTotalFiles] = useState(0);
   const [limit] = useState(10);
   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  const showToast = (message, variant = 'info') => {
+    setToast({
+      show: true,
+      message,
+      variant
+    });
+  };
+
+  const closeToast = () => {
+    setToast(prev => ({ ...prev, show: false }));
+  };
 
   const fetchFiles = useCallback(async () => {
     setIsLoading(true);
@@ -36,16 +57,16 @@ const Files = () => {
     } catch (error) {
       console.error('Error:', error);
       setError('No se pudieron cargar los archivos. Por favor, intenta de nuevo más tarde.');
+      showToast('Error al cargar los archivos', 'error');
     } finally {
       setIsLoading(false);
     }
   }, [currentPage, debouncedSearch, limit]);
 
-  // Debounce para la búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setCurrentPage(1); // Resetear a primera página al buscar
+      setCurrentPage(1);
     }, 300);
 
     return () => clearTimeout(timer);
@@ -75,20 +96,29 @@ const Files = () => {
         throw new Error('Error al subir los archivos');
       }
 
-      const result = await response.json();
-      console.log('Archivos subidos:', result);
-
       await fetchFiles();
+      showToast(
+        `${selectedFiles.length > 1 ? 'Archivos subidos' : 'Archivo subido'} correctamente`, 
+        'success'
+      );
     } catch (error) {
       console.error('Error al subir los archivos:', error);
+      showToast('No se pudieron subir los archivos. Por favor, intenta de nuevo.', 'error');
       setError('No se pudieron subir los archivos. Por favor, intenta de nuevo.');
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleFileDelete = async (url) => {
-    setIsDeletingFile(url);
+  const handleDeleteClick = (file) => {
+    setFileToDelete(file);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleFileDelete = async () => {
+    if (!fileToDelete) return;
+    
+    setIsDeletingFile(fileToDelete.url);
     try {
       const response = await fetch('http://localhost:8000/files/delete', {
         method: 'DELETE',
@@ -96,7 +126,7 @@ const Files = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          blob_url: url
+          blob_url: fileToDelete.url
         })
       });
 
@@ -105,11 +135,15 @@ const Files = () => {
       }
 
       await fetchFiles();
+      showToast('Archivo eliminado correctamente', 'success');
     } catch (error) {
       console.error('Error al eliminar el archivo:', error);
+      showToast('No se pudo eliminar el archivo. Por favor, intenta de nuevo.', 'error');
       setError('No se pudo eliminar el archivo. Por favor, intenta de nuevo.');
     } finally {
       setIsDeletingFile(null);
+      setIsDeleteModalOpen(false);
+      setFileToDelete(null);
     }
   };
 
@@ -160,7 +194,7 @@ const Files = () => {
       window.open(blobUrl, '_blank');
     } catch (error) {
       console.error('Error al abrir el PDF:', error);
-      alert('No se pudo abrir el PDF. Por favor, inténtalo de nuevo más tarde.');
+      showToast('No se pudo abrir el PDF. Por favor, inténtalo de nuevo más tarde.', 'error');
     }
   };
 
@@ -264,7 +298,7 @@ const Files = () => {
                       )}
                       <button
                         className="delete-btn"
-                        onClick={() => handleFileDelete(file.url)}
+                        onClick={() => handleDeleteClick(file)}
                         title="Eliminar"
                         disabled={isDeletingFile === file.url}
                       >
@@ -289,6 +323,7 @@ const Files = () => {
           </>
         )}
       </div>
+      
       {error && (
         <div className="error-message" style={{
           backgroundColor: '#fee2e2',
@@ -300,6 +335,32 @@ const Files = () => {
           {error}
         </div>
       )}
+
+      <ToastAlert
+        isVisible={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={closeToast}
+        duration={4000}
+      />
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setFileToDelete(null);
+        }}
+        onConfirm={handleFileDelete}
+        title="Eliminar Archivo"
+        description={
+          fileToDelete 
+            ? `¿Estás seguro que deseas eliminar el archivo "${fileToDelete.pathname.split('/').pop()}"? Esta acción no se puede deshacer.`
+            : "¿Estás seguro que deseas eliminar este archivo? Esta acción no se puede deshacer."
+        }
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 };

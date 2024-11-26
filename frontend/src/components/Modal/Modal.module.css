@@ -1,0 +1,215 @@
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: modalFadeIn 0.2s ease forwards;
+  }
+  
+  .modalWrapper {
+    width: 90%;
+    max-width: 500px;
+    margin: 20px;
+  }
+  
+  .modalBox {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 100px rgba(0, 157, 224, 0.1);
+    position: relative;
+    transform-origin: center;
+    opacity: 0;
+    transform: scale(0.95);
+    animation: modalSlideIn 0.3s ease forwards;
+  }
+  
+  .modalCloseBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modalCloseBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(90deg);
+  }
+  
+  .modalHeader {
+    padding: 24px 24px 0;
+  }
+  
+  .modalHeader h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary-color), #40a9ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .modalBody {
+    padding: 16px 24px;
+  }
+  
+  .modalBody p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+  }
+  
+  .modalFooter {
+    padding: 16px 24px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  
+  .modalBtnPrimary,
+  .modalBtnSecondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+  
+  .modalBtnPrimary {
+    background: var(--primary-color);
+    color: white;
+  }
+  
+  .modalBtnPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 157, 224, 0.3);
+  }
+  
+  .modalBtnSecondary {
+    background: transparent;
+    color: var(--text-color);
+    border: 2px solid #e0e0e0;
+  }
+  
+  .modalBtnSecondary:hover {
+    background: transparent;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 157, 224, 0.3);
+  }
+  
+  /* Variantes de botones */
+  .modalBtnDanger {
+    background: #ff4d4f;
+  }
+  
+  .modalBtnDanger:hover {
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+  }
+  
+  .modalBtnWarning {
+    background: #faad14;
+  }
+  
+  .modalBtnWarning:hover {
+    box-shadow: 0 4px 12px rgba(250, 173, 20, 0.3);
+  }
+  
+  .modalBtnInfo {
+    background: var(--primary-color);
+  }
+  
+  .modalBtnInfo:hover {
+    box-shadow: 0 4px 12px rgba(0, 157, 224, 0.3);
+  }
+  
+  /* Animaciones */
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .modalFadeout {
+    animation: modalFadeOut 0.2s ease forwards;
+  }
+  
+  .modalSlideout {
+    animation: modalSlideOut 0.2s ease forwards;
+  }
+  
+  @keyframes modalFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  @keyframes modalSlideOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+  
+  /* Clase para prevenir scroll */
+  :global(.modalOpen) {
+    overflow: hidden;
+  }
+  
+  /* Media queries */
+  @media (max-width: 480px) {
+    .modalWrapper {
+      width: 95%;
+      margin: 16px;
+    }
+    
+    .modalFooter {
+      flex-direction: column-reverse;
+    }
+    
+    .modalBtnPrimary,
+    .modalBtnSecondary {
+      width: 100%;
+      padding: 12px;
+    }
+  
+    .modalHeader h3 {
+      font-size: 20px;
+    }
+  
+    .modalBody p {
+      font-size: 14px;
+    }
+  }
