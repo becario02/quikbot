@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
 import { MessageSquare, Bot, Brain, Shield, ArrowRight, LogOut } from 'lucide-react';
 import robotHero from '../assets/images/robot-hero.png';
+import advanLogo from '../assets/svg/advan-logo.svg';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -65,7 +66,9 @@ const HomePage = () => {
     <div className="landing-container">
       {/* Header */}
       <header className="landing-header">
-        <div className="logo">QuikBot</div>
+        <div className="logo">  
+          <img src={advanLogo} alt="Advan Logo"/>
+        </div>
         <nav className="landing-nav">
           {user ? <UserProfile /> : <LoginButton />}
         </nav>

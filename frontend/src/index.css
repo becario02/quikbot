@@ -939,3 +939,9 @@ input[type="file"] {
     font-size: 32px;
   }
 }
+
+.logo img {
+  height: 70px;
+  width: auto;
+  margin: -27px;
+}
