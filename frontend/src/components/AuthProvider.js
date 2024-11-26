@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
+import ToastAlert from './ToastAlert';
 
 // Configuraciones
 const AUTHORIZED_EMAILS = [
@@ -22,15 +23,34 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
+  // Estado para el sistema de alertas
+  const [alert, setAlert] = useState({
+    show: false,
+    message: '',
+    variant: 'info'
+  });
+
+  // Función para mostrar alertas
+  const showAlert = (message, variant = 'info') => {
+    setAlert({
+      show: true,
+      message,
+      variant
+    });
+  };
+
+  // Función para cerrar la alerta
+  const closeAlert = () => {
+    setAlert(prev => ({ ...prev, show: false }));
+  };
 
   const hasAdminAccess = (email) => AUTHORIZED_EMAILS.includes(email);
 
   const handleLoginSuccess = async (response) => {
     try {
-      // Guardar el token de Google
       localStorage.setItem(STORAGE_KEYS.TOKEN, response.access_token);
 
-      // Obtener información del usuario
       const userInfo = await fetch(GOOGLE_USER_INFO_URL, {
         headers: { Authorization: `Bearer ${response.access_token}` },
       });
@@ -46,19 +66,18 @@ export const AuthProvider = ({ children }) => {
         
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userToSave));
         setUser(userToSave);
+        showAlert('Inicio de sesión exitoso', 'success');
       } else {
-        alert(`Solo se permite el acceso con correos de Advan Pro (${DOMAIN_RESTRICTION})`);
-        // Limpiar el token si el dominio no es válido
+        showAlert(`Solo se permite el acceso con correos de Advan Pro (${DOMAIN_RESTRICTION})`, 'error');
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
       }
     } catch (error) {
       console.error('Error durante la autenticación:', error);
-      alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
+      showAlert('Error al iniciar sesión. Por favor, intenta de nuevo.', 'error');
       localStorage.removeItem(STORAGE_KEYS.TOKEN);
     }
   };
 
-  // Verificar autenticación al inicio
   useEffect(() => {
     const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
     if (savedUser) {
@@ -71,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     onSuccess: handleLoginSuccess,
     onError: () => {
       console.error('Error en el inicio de sesión');
-      alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
+      showAlert('Error al iniciar sesión. Por favor, intenta de nuevo.', 'error');
     },
   });
 
@@ -79,6 +98,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(STORAGE_KEYS.USER);
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
     setUser(null);
+    showAlert('Sesión cerrada correctamente', 'info');
     navigate('/', { replace: true });
   };
 
@@ -92,12 +112,19 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     hasAdminAccess: user?.hasAdminAccess ?? false,
-    getGoogleToken
+    getGoogleToken,
+    showAlert // Exponemos la función showAlert en el contexto
   };
 
   return (
     <AuthContext.Provider value={contextValue}>
       {children}
+      <ToastAlert
+        isVisible={alert.show}
+        message={alert.message}
+        variant={alert.variant}
+        onClose={closeAlert}
+      />
     </AuthContext.Provider>
   );
 };

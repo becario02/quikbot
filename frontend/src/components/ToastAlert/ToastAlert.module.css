@@ -1,0 +1,140 @@
+.toastContainer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+}
+
+.toastAlert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.05),
+    0 0 1px rgba(0, 0, 0, 0.1);
+  min-width: 320px;
+  max-width: 420px;
+  border-left: 4px solid transparent;
+  margin-top: 12px;
+  transform-origin: right;
+  will-change: transform, opacity;
+}
+
+.success {
+  border-left-color: #009de0;
+}
+
+.success .icon {
+  color: #009de0;
+}
+
+.error {
+  border-left-color: #dc2626;
+}
+
+.error .icon {
+  color: #dc2626;
+}
+
+.info {
+  border-left-color: #009de0;
+}
+
+.info .icon {
+  color: #009de0;
+}
+
+.warning {
+  border-left-color: #f59e0b;
+}
+
+.warning .icon {
+  color: #f59e0b;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  flex-grow: 1;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #6b7280;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.closeButton:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.closeIcon {
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes enter {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes exit {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.enter {
+  animation: enter 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+
+.exit {
+  animation: exit 0.3s cubic-bezier(0.06, 0.71, 0.55, 1) forwards;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 640px) {
+  .toastContainer {
+    right: 16px;
+    left: 16px;
+    bottom: 16px;
+  }
+
+  .toastAlert {
+    min-width: unset;
+    width: 100%;
+  }
+}
