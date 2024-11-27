@@ -1,45 +1,89 @@
-import React from 'react';
-import { NavLink, Outlet, Link } from 'react-router-dom';
-import { FileText, ChevronLeft, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, Outlet } from 'react-router-dom';
+import { Layout, FileText, Bot, Home, LogOut}
+from 'lucide-react';
 import { useAuth } from './AuthProvider';
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialLoad(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const menuItems = [
+    { name: "Dashboard", icon: <Layout size={18} />, path: "/dashboard", exact: true },
+    { name: "Archivos", icon: <FileText size={18} />, path: "/dashboard/files" },
+    { name: "Entrenamiento", icon: <Bot size={18} />, path: "/dashboard/training" },
+  ];
 
   return (
     <div className="dashboard-container">
-      <aside className="sidebar">
+      <aside className={`sidebar ${isInitialLoad ? 'initial-load' : ''}`}>
         <div className="sidebar-header">
-          <h1>Gestión del Chatbot</h1>
-          <hr></hr>
-        </div>
-        <nav>
-          <ul className="sidebar-nav">
-            <li><NavLink to="/dashboard/files"><FileText size={18} /> Files</NavLink></li>
-          </ul>
-        </nav>
-      </aside>
-      <main className="main-content">
-        <div className="top-bar">
-          <Link to="/" className="back-home">
-            <ChevronLeft size={20} />
-            <span>Volver al inicio</span>
-          </Link>
-          <div className="user-profile-dashboard">
-            <div className="user-info">
-              <span className="user-name">{user?.name}</span>
-              <span className="user-email">{user?.email}</span>
+          <div className="logo-container">
+            <div className="logo-icon">
+              <Bot size={24} />
             </div>
+            <div className="logo-text">
+              <h1>QuikBot</h1>
+              <p>Panel de Control</p>
+            </div>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            <h2 className="nav-section-title">Menú Principal</h2>
+            <ul>
+              {menuItems.map((item, index) => (
+                <li key={index}>
+                  <NavLink 
+                    to={item.path}
+                    end={item.exact}
+                    className={({ isActive }) => isActive ? 'active' : ''}
+                  >
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="user-mini-profile">
             <img 
               src={user?.picture} 
               alt={user?.name}
-              className="user-avatar"
+              className="user-avatar-small"
             />
-            <button onClick={logout} className="logout-button" title="Cerrar sesión">
+            <div className="user-info-small">
+              <span className="user-name-small">{user?.name}</span>
+              <span className="user-role">Administrador</span>
+            </div>
+          </div>
+          
+          <div className="footer-actions">
+            <Link to="/" className="footer-button">
+              <Home size={18} />
+              <span>Inicio</span>
+            </Link>
+            <button onClick={logout} className="footer-button">
               <LogOut size={18} />
+              <span>Cerrar Sesión</span>
             </button>
           </div>
         </div>
+      </aside>
+
+      <main className="main-content">
         <Outlet />
       </main>
     </div>

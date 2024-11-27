@@ -945,3 +945,244 @@ input[type="file"] {
   width: auto;
   margin: -27px;
 }
+
+
+
+
+/* Contenedor principal del dashboard */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* Estilos del Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: white;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Header del Sidebar */
+.sidebar-header {
+  padding: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary-color), #40a9ff);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.logo-text h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+  background: linear-gradient(135deg, var(--primary-color), #40a9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-text p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Navegación */
+.sidebar-nav {
+  flex: 1;
+  padding: 24px 12px;
+  overflow-y: auto;
+}
+
+.nav-section {
+  margin-bottom: 24px;
+}
+
+.nav-section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0 0 8px 12px;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  color: #666;
+  text-decoration: none;
+  border-radius: 8px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+  gap: 12px;
+}
+
+.sidebar-nav li a:hover {
+  background-color: rgba(0, 157, 224, 0.05);
+  color: var(--primary-color);
+}
+
+.sidebar-nav li a.active {
+  background: linear-gradient(135deg, rgba(0, 157, 224, 0.1), rgba(64, 169, 255, 0.1));
+  color: var(--primary-color);
+}
+
+.sidebar-nav li a svg {
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav li a:hover svg,
+.sidebar-nav li a.active svg {
+  color: var(--primary-color);
+}
+
+/* Footer del Sidebar */
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.user-mini-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.user-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.user-info-small {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.user-role {
+  font-size: 11px;
+  color: #666;
+}
+
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: #666;
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.footer-button:hover {
+  background-color: rgba(0, 157, 224, 0.05);
+  color: var(--primary-color);
+}
+
+.footer-button svg {
+  transition: all 0.2s ease;
+}
+
+.footer-button:hover svg {
+  color: var(--primary-color);
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* Animación inicial */
+.sidebar.initial-load {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.sidebar.initial-load .logo-container {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition-delay: 0.1s;
+}
+
+.sidebar.initial-load .nav-section {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition-delay: 0.2s;
+}
+
+.sidebar.initial-load .sidebar-footer {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition-delay: 0.3s;
+}
+
+/* Scrollbar personalizado */
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
