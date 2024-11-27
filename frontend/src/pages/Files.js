@@ -43,7 +43,7 @@ const Files = () => {
     try {
       const searchParam = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
       const response = await fetch(
-        `http://localhost:8000/files?page=${currentPage}&limit=${limit}${searchParam}`
+        `${process.env.REACT_APP_API_URL}/files?page=${currentPage}&limit=${limit}${searchParam}`
       );
 
       if (!response.ok) {
@@ -87,7 +87,7 @@ const Files = () => {
     });
 
     try {
-      const response = await fetch('http://localhost:8000/files/upload', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/files/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -120,7 +120,7 @@ const Files = () => {
     
     setIsDeletingFile(fileToDelete.url);
     try {
-      const response = await fetch('http://localhost:8000/files/delete', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/files/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

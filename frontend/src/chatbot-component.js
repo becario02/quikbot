@@ -16,7 +16,7 @@ class ChatbotComponent extends HTMLElement {
   loadGoogleMapsScript() {
     if (!document.querySelector('script[src^="https://maps.googleapis.com/maps/api/js"]')) {
       const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAOmLYP48_vFvVtvTPcjtfo5agMiN7_Lb0';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);

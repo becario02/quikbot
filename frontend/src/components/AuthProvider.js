@@ -4,19 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import ToastAlert from './ToastAlert';
 import Modal from './Modal';
 
-// Configuraciones
-const AUTHORIZED_EMAILS = [
-  'becario02@advanpro.com.mx',
-  'admin@advanpro.com.mx',
-];
-
 const STORAGE_KEYS = {
   USER: 'advan_user',
   TOKEN: 'google_token'
 };
 
-const GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo';
-const DOMAIN_RESTRICTION = '@advanpro.com.mx';
+// Configuraciones
+const AUTHORIZED_EMAILS    = process.env.REACT_APP_AUTHORIZED_EMAILS.split(',');
+const GOOGLE_USER_INFO_URL = process.env.REACT_APP_GOOGLE_USER_INFO_URL;
+const DOMAIN_RESTRICTION   = process.env.REACT_APP_AUTH_DOMAIN;
 
 const AuthContext = createContext(null);
 

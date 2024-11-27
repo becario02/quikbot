@@ -8,12 +8,9 @@ import DashboardLayout from './components/DashboardLayout'
 import Files           from './pages/Files'
 import ChatbotWrapper  from './ChatbotWrapper'
 
-// Constantes
-const GOOGLE_CLIENT_ID = "869195614443-tu9nh2p59rq1v3hc6vkc3cjot284sl1u.apps.googleusercontent.com";
-
 function App() {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <Router>
         <AuthProvider>
           <Routes>
