@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
 import { MessageSquare, Bot, Brain, Shield, ArrowRight, LogOut } from 'lucide-react';
@@ -8,6 +8,11 @@ import advanLogo from '../assets/svg/advan-logo.svg';
 const HomePage = () => {
   const navigate = useNavigate();
   const { user, login, logout, hasAdminAccess } = useAuth();
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    setKey(prev => prev + 1);
+  }, [user]);
 
   const UserProfile = () => (
     <div className="user-profile">
@@ -63,7 +68,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="landing-container">
+    <div className="landing-container" key={key}>
       {/* Header */}
       <header className="landing-header">
         <div className="logo">  
