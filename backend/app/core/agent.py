@@ -8,68 +8,89 @@ from app.tools.vectorstore_toolkit    import get_vectorstore_toolkit
 from app.core.chat_history            import get_chat_history
 from app.utils.abbreviations          import abbreviations, expand_abbreviations
 from app.config import settings
-from typing     import Optional
+from typing     import Optional, Dict, Tuple
+from prisma import Prisma
+
+# Cache simple para prompts y descripciones
+class PromptCache:
+    def __init__(self):
+        self._cache: Dict[str, str] = {}
+
+    def get(self, key: str) -> Optional[str]:
+        return self._cache.get(key)
+
+    def set(self, key: str, value: str):
+        self._cache[key] = value
+
+    def clear(self):
+        self._cache.clear()
+
+# Instancias globales del cache
+prompt_cache = PromptCache()
+tool_cache = PromptCache()
 
 # Convertir el diccionario a un texto legible
 abbreviations_text = "\n".join([f"{k}: {', '.join(v)}" for k, v in abbreviations.items()])
 
-def create_prompt(username: Optional[str] = None):
-    if username:
-        # Prompt para usuario regular
-        system_content = f"""
-        Eres un agente de servicio al cliente con acceso a un base de datos
-        sql server y documentación interna de la empresa. Tu trabajo es responder a las consultas del cliente 
-        {username} de la mejor forma posible. Para asegurar los datos del 
-        cliente usa cuando creas necesario: WHERE Cliente="{username}".
-        🔒Acceso limitado unicamente a la información del cliente {username}, nunca uses en el WHERE otro cliente que no sea {username} o te despido!!!
-        SIEMPRE saluda al cliente {username} por su nombre. Usa un tono
-        amigable e informal, y usa emojis en la mayoria de tus respuestas.
-        
-        """
-    else:
-        # Prompt para soporte técnico
-        system_content = """
-        Eres un agente de servicio al cliente con acceso a un base de datos
-        sql server y documentación interna de la empresa. Tu trabajo es responder a las consultas del equipo de soporte al cliente
-        de la mejor forma posible. Para asegurar los datos del 
-        cliente usa cuando creas necesario: WHERE Cliente="nombre del cliente".
-        Acceso a toda la informacion disponible, Usa un tono
-        amigable e informal, y usa emojis en la mayoria de tus respuestas.
-        """
+async def get_prompt_content(prompt_type: str) -> str:
+    """Obtiene el contenido del prompt desde la cache o la base de datos"""
+    # Intentar obtener desde cache
+    cached_content = prompt_cache.get(prompt_type)
+    if cached_content is not None:
+        return cached_content
 
-    # Contenido común para ambos tipos de prompts
-    common_content = """
-    Usa tu herraienta de vectorstore si el usuario pregunta por infor acerca de resolver dudas, seguir procedimientos o validar configuraciones,
+    # Si no está en cache, obtener de la base de datos
+    db = Prisma()
+    await db.connect()
+    prompt = await db.agentprompt.find_unique(
+        where={
+            'type': prompt_type
+        }
+    )
+    await db.disconnect()
     
-    Si te preguntan por los modulos faltantes de un cliente usa esta consulta como esta "SELECT DISTINCT Modulo FROM vModulosCliente WHERE Modulo NOT IN (SELECT Modulo FROM vModulosCliente WHERE Cliente = 'Nombre del Cliente');" y muestra los resultados en lista numerica
+    content = prompt.content if prompt else ""
+    # Guardar en cache
+    prompt_cache.set(prompt_type, content)
+    return content
 
-    # Vista vReporteClienteChat - Campos Disponibles
-    Información completa de tickets:
-    - Ticket: ID único del reporte
-    - Modulo: Área/sistema afectado
-    - UsuarioReporte: Creador del ticket
-    - Fecha: Timestamp de creación
-    - ReporteDescripcion: Detalle del problema
-    - TipoReporte: Categoría del reporte
-    - Cliente: Empresa afectada
-    - BaseDatos: BD relacionada
-    - HorasCotizadas: Tiempo estimado
-    - Fase: Estado del desarrollo (Análisis, Construcción, Cotización, Documentación, Liberado, QA y Validación)
-    - Status: Estado actual
-    - HorasDesarrollo: Tiempo real invertido
-    - NotasSeguimiento: Historial de comunicaciones
-    - TipoRequerimiento: Clasificación
-    - Diagnostico: Análisis técnico
+async def get_tool_description(tool_name: str) -> tuple[str, Optional[str]]:
+    """Obtiene la descripción de la herramienta desde la cache o la base de datos"""
+    # Intentar obtener desde cache
+    cached_desc = tool_cache.get(tool_name)
+    if cached_desc is not None:
+        # Almacenamos las dos descripciones separadas por un delimitador especial
+        desc_parts = cached_desc.split("||SPLIT||")
+        return desc_parts[0], desc_parts[1] if len(desc_parts) > 1 else None
 
-    # Vista vModulosCliente - Campos Disponibles
-    Información de módulos activos por cliente:
-    - PROYECTO_CLAVE: ID numérico del proyecto (ejemplo: 27)
-    - Modulo: Nombre del módulo/sistema (ejemplo: ACTIVO FIJO, ANALYTICS, etc.)
-    - Cliente: Empresa que utiliza el módulo (ejemplo: ADVAN)
+    # Si no está en cache, obtener de la base de datos
+    db = Prisma()
+    await db.connect()
+    tool = await db.tooldescription.find_unique(
+        where={
+            'toolName': tool_name
+        }
+    )
+    await db.disconnect()
 
-    # Ejemplos de conversaciones
-        - rol: cliente: Cuantos tickets tiene el cliente AMERCIANOS, rol: bot: No puedo brindar informaicon de otros clientes...
-    """
+    if tool:
+        # Guardar en cache usando un delimitador para separar las descripciones
+        cache_value = f"{tool.description}||SPLIT||{tool.supportDescription or ''}"
+        tool_cache.set(tool_name, cache_value)
+        return tool.description, tool.supportDescription
+    return "", None
+
+async def create_prompt(username: Optional[str] = None):
+    # Obtener prompts de la base de datos
+    if username:
+        system_content = await get_prompt_content('regular_user')
+        # Reemplazar el placeholder de username
+        system_content = system_content.replace("{username}", username)
+    else:
+        system_content = await get_prompt_content('support_user')
+    
+    # Obtener el contenido común
+    common_content = await get_prompt_content('common')
 
     return ChatPromptTemplate.from_messages([
         ("system", system_content + common_content),
@@ -77,10 +98,17 @@ def create_prompt(username: Optional[str] = None):
         ("placeholder", "{agent_scratchpad}"),
     ])
 
-def initialize_agent(username: Optional[str] = None):
+async def initialize_agent(username: Optional[str] = None):
     # Configurar herramientas según el modo
-    sql_tools = get_sql_toolkit(username)  # Pasará None para soporte
-    vectorstore_tools = get_vectorstore_toolkit()
+    sql_description, sql_support_description = await get_tool_description('sql_toolkit')
+    vectorstore_description, _ = await get_tool_description('vectorstore_toolkit')
+    
+    # Configurar herramientas según el modo
+    sql_tools = await get_sql_toolkit(
+        username=username,
+        description=sql_support_description if username is None else sql_description
+    )
+    vectorstore_tools = await get_vectorstore_toolkit(description=vectorstore_description)
     tools = sql_tools + vectorstore_tools
 
     # Configurar el chat
@@ -90,7 +118,7 @@ def initialize_agent(username: Optional[str] = None):
     )
 
     # Crear el prompt apropiado
-    prompt = create_prompt(username)
+    prompt = await create_prompt(username)
 
     # Crear el agente
     agent = create_tool_calling_agent(chat, tools, prompt)
@@ -102,29 +130,33 @@ def initialize_agent(username: Optional[str] = None):
         verbose=True
     )
 
-def execute_agent(message: str, session_id: str, username: Optional[str] = None):
-    # Expandir abreviaciones en el mensaje
-    expanded_message = expand_abbreviations(message)
-    
-    # Inicializar el agente
-    agent_executor = initialize_agent(username)
-    
-    # Configurar el historial de conversación
-    conversational_agent_executor = RunnableWithMessageHistory(
-        agent_executor,
-        get_chat_history,
-        input_messages_key="messages",
-        output_messages_key="output",
-    )
-    
-    # Invocar el agente
-    response = conversational_agent_executor.invoke(
-        {
-            "messages": [
-                HumanMessage(content=expanded_message)
-            ]
-        },
-        {"configurable": {"session_id": session_id}}
-    )
-    
-    return response['output']
+async def execute_agent(message: str, session_id: str, username: Optional[str] = None):
+    try:
+        # Expandir abreviaciones en el mensaje
+        expanded_message = expand_abbreviations(message)
+        
+        # Inicializar el agente
+        agent_executor = await initialize_agent(username)
+        
+        # Configurar el historial de conversación
+        conversational_agent_executor = RunnableWithMessageHistory(
+            agent_executor,
+            get_chat_history,
+            input_messages_key="messages",
+            output_messages_key="output",
+        )
+        
+        # Invocar el agente
+        response = conversational_agent_executor.invoke(
+            {
+                "messages": [
+                    HumanMessage(content=expanded_message)
+                ]
+            },
+            {"configurable": {"session_id": session_id}}
+        )
+        
+        return response['output']
+    except Exception as e:
+        print(f"Error en execute_agent: {str(e)}")
+        raise

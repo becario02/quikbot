@@ -19,7 +19,7 @@ const DashboardLayout = () => {
   const menuItems = [
     { name: "Dashboard", icon: <Layout size={18} />, path: "/dashboard", exact: true },
     { name: "Archivos", icon: <FileText size={18} />, path: "/dashboard/files" },
-    { name: "Entrenamiento", icon: <Bot size={18} />, path: "/dashboard/training" },
+    { name: "Configuración", icon: <Bot size={18} />, path: "/dashboard/agent-config" },
   ];
 
   return (

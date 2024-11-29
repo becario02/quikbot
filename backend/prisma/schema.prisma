@@ -1,0 +1,23 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-py"
+}
+
+model AgentPrompt {
+  id            Int      @id @default(autoincrement())
+  type          String   @unique // "regular_user", "support_user", "common"
+  content       String   @db.Text
+  lastUpdated   DateTime @updatedAt
+}
+
+model ToolDescription {
+  id            Int      @id @default(autoincrement())
+  toolName      String   @unique // "sql_toolkit", "vectorstore_toolkit"
+  description   String   @db.Text
+  supportDescription String? @db.Text  // Descripción específica para soporte, opcional
+  lastUpdated   DateTime @updatedAt
+}

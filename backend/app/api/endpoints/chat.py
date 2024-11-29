@@ -49,14 +49,14 @@ async def chat_endpoint(
                 raise HTTPException(status_code=403, detail="Acceso no autorizado")
             
             # Usar el agente unificado en modo soporte (sin username)
-            response = execute_agent(
+            response = await execute_agent(
                 message=chat_input.message,
                 session_id=chat_input.session_id
             )
         else:
             # Usuario regular: usar el agente con username
             user_data = auth_handler.decode_token(token)
-            response = execute_agent(
+            response = await execute_agent(
                 message=chat_input.message,
                 session_id=chat_input.session_id,
                 username=user_data["username"]

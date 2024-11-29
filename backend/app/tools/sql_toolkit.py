@@ -4,7 +4,7 @@ from app.database.db_config import get_db
 from app.utils.query_filter import apply_customer_filter, decode_unicode
 from typing import Optional
 
-def get_sql_toolkit(username: Optional[str] = None):
+async def get_sql_toolkit(username: Optional[str] = None, description: Optional[str] = None):
     db = get_db()
     
     if username is not None:
@@ -15,13 +15,6 @@ def get_sql_toolkit(username: Optional[str] = None):
             filtered_query = apply_customer_filter(decoded_query, username)
             return original_run(filtered_query, *args, **kwargs)
         db.run = filtered_run
-        
-        description = """
-        Utiliza esta herramienta cuando necesites consultar datos estructurados 
-        almacenados en la base de datos SQL Server. Las consultas están automáticamente 
-        filtradas para mostrar solo información relevante para el usuario actual.
-        Usa esta herramienta para consultas sobre tickets o modulos del cliente.
-        """
     else:
         # Modo soporte - solo decodificar Unicode
         original_run = db.run
@@ -30,13 +23,6 @@ def get_sql_toolkit(username: Optional[str] = None):
             *args, 
             **kwargs
         )
-        
-        description = """
-        Herramienta para consultas SQL Server sin restricciones.
-        - Acceso completo a todas las tablas
-        - No hay filtros automáticos
-        - Usa esta herramienta para consultas sobre tickets o modulos
-        """
     
     sql_toolkit = SQLDatabaseToolkit(
         db=db,

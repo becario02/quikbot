@@ -5,6 +5,7 @@ from langchain.agents.agent_toolkits import VectorStoreInfo, VectorStoreToolkit
 from langchain.agents import Tool
 from qdrant_client import QdrantClient
 from app.config import settings
+from typing import Optional
 
 def format_document_with_source(doc):
     """
@@ -18,7 +19,7 @@ def format_document_with_source(doc):
     else:
         return f"{doc.page_content}\n\nFuente: {source}"
 
-def create_vectorstore_search_tool(vectorstore):
+def create_vectorstore_search_tool(vectorstore, description: Optional[str] = None):
     """
     Crea una herramienta de búsqueda personalizada que incluye las URLs reales del blob
     """
@@ -29,17 +30,11 @@ def create_vectorstore_search_tool(vectorstore):
 
     return Tool(
         name="vectorstore_search",
-        description="""
-        Herramienta para consultar documentación (Guias de referencia) de la empresa advanpro
-        - Contiene documentos sobre manuales técnicos o instructivos destinados a orientar a los usuarios
-          en la configuración, uso o solución de problemas relacionados con funcionalidades especificas 
-          del software de advanpro.
-        - Estos documentos se dividien en las siguientes secciones: 
-        """,
+        description=description or "Herramienta para consultar documentación",
         func=search_func
     )
 
-def get_vectorstore_toolkit():
+async def get_vectorstore_toolkit(description: Optional[str] = None):
     client = QdrantClient(
         url=settings.QDRANT_URL,
         api_key=settings.QDRANT_API_KEY
@@ -54,6 +49,6 @@ def get_vectorstore_toolkit():
     )
 
     # Crear herramienta de búsqueda personalizada
-    search_tool = create_vectorstore_search_tool(vectorstore)
+    search_tool = create_vectorstore_search_tool(vectorstore, description)
 
     return [search_tool]

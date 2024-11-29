@@ -1731,3 +1731,138 @@ input[type="file"] {
     font-size: 12px;
   }
 }
+
+
+
+
+/* Estilos para la configuración del agente */
+.agent-config-container {
+  display: flex;
+  gap: 20px;
+}
+
+.editor-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-column {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.config-section {
+  margin-bottom: 24px;
+}
+
+.config-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.config-editor {
+  box-sizing: border-box;
+  width: 100%;
+  height: 500px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  background-color: #fafafa;
+  transition: border-color 0.3s ease;
+}
+
+.config-editor:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 157, 224, 0.1);
+}
+
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.config-item {
+  padding: 12px;
+  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.config-item:hover {
+  border-color: var(--primary-color);
+  background-color: #f8fbff;
+}
+
+.config-item.active {
+  border-color: var(--primary-color);
+  background-color: #f0f7ff;
+}
+
+.config-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.config-item-title {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.config-preview {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.config-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.editor-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.no-selection-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 2px dashed #e8e8e8;
+  color: #666;
+  text-align: center;
+  padding: 24px;
+}
+
+.no-selection-message svg {
+  margin-bottom: 16px;
+  color: #999;
+}
