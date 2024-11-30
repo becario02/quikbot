@@ -18,6 +18,5 @@ model ToolDescription {
   id            Int      @id @default(autoincrement())
   toolName      String   @unique // "sql_toolkit", "vectorstore_toolkit"
   description   String   @db.Text
-  supportDescription String? @db.Text  // Descripción específica para soporte, opcional
   lastUpdated   DateTime @updatedAt
 }

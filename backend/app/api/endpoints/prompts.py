@@ -11,7 +11,6 @@ class PromptUpdate(BaseModel):
 
 class ToolDescriptionUpdate(BaseModel):
     description: str
-    supportDescription: str | None = None
 
 @router.get("/prompts")
 async def get_prompts():
@@ -87,15 +86,13 @@ async def update_tool(tool_name: str, tool: ToolDescriptionUpdate):
                 'toolName': tool_name
             },
             data={
-                'description': tool.description,
-                'supportDescription': tool.supportDescription
+                'description': tool.description
             }
         )
         await db.disconnect()
         
         # Actualizar cache
-        cache_value = f"{tool.description}||SPLIT||{tool.supportDescription or ''}"
-        tool_cache.set(tool_name, cache_value)
+        tool_cache.set(tool_name, tool.description)
         
         logging.info(f"Tool '{tool_name}' updated")
         return {

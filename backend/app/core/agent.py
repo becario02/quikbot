@@ -30,22 +30,16 @@ async def create_prompt(username: Optional[str] = None):
 
 async def initialize_agent(username: Optional[str] = None):
     # Configurar herramientas según el modo
-    sql_description, sql_support_description = await get_tool_description('sql_toolkit')
-    vectorstore_description, _ = await get_tool_description('vectorstore_toolkit')
+    sql_description = await get_tool_description('sql_toolkit')
+    vectorstore_description = await get_tool_description('vectorstore_toolkit')
     
     # Configurar herramientas según el modo
-    sql_tools = await get_sql_toolkit(
-        username=username,
-        description=sql_support_description if username is None else sql_description
-    )
+    sql_tools = await get_sql_toolkit(username=username, description=sql_description)
     vectorstore_tools = await get_vectorstore_toolkit(description=vectorstore_description)
     tools = sql_tools + vectorstore_tools
 
     # Configurar el chat
-    chat = ChatOpenAI(
-        model="gpt-3.5-turbo-1106",
-        temperature=0,
-    )
+    chat = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0)
 
     # Crear el prompt apropiado
     prompt = await create_prompt(username)

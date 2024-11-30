@@ -49,11 +49,8 @@ const AgentConfig = () => {
     const itemData = type === 'prompt' ? { ...item, promptType: item.type } : item;
     setSelectedItem({ ...itemData, type });
     setEditingContent(
-      type === 'prompt' ? item.content :
-      type === 'tool' ? {
-        description: item.description,
-        supportDescription: item.supportDescription
-      } : null
+      type === 'prompt' ? item.content : 
+      type === 'tool' ? item.description : null
     );
   };
 
@@ -65,10 +62,7 @@ const AgentConfig = () => {
 
       const body = selectedItem.type === 'prompt'
         ? { content: editingContent }
-        : {
-            description: editingContent.description,
-            supportDescription: editingContent.supportDescription
-          };
+        : { description: editingContent };
 
       console.log('Endpoint:', endpoint);
       console.log('Body:', body);
@@ -122,40 +116,15 @@ const AgentConfig = () => {
                 </button>
               </div>
               
-              {selectedItem.type === 'prompt' ? (
-                <textarea
-                  className="config-editor"
-                  value={editingContent}
-                  onChange={(e) => setEditingContent(e.target.value)}
-                />
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div>
-                    <label className="config-section-title">Descripción Regular</label>
-                    <textarea
-                      className="config-editor"
-                      value={editingContent.description}
-                      onChange={(e) => setEditingContent({
-                        ...editingContent,
-                        description: e.target.value
-                      })}
-                    />
-                  </div>
-                  {selectedItem.supportDescription !== null && (
-                    <div>
-                      <label className="config-section-title">Descripción para Soporte</label>
-                      <textarea
-                        className="config-editor"
-                        value={editingContent.supportDescription}
-                        onChange={(e) => setEditingContent({
-                          ...editingContent,
-                          supportDescription: e.target.value
-                        })}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+              <textarea
+                className="config-editor"
+                value={editingContent}
+                onChange={(e) => setEditingContent(e.target.value)}
+                placeholder={selectedItem.type === 'prompt' ? 
+                  "Ingrese el contenido del prompt..." : 
+                  "Ingrese la descripción de la herramienta..."
+                }
+              />
             </>
           ) : (
             <div className="no-selection-message">
