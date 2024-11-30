@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.core.agent import prompt_cache, tool_cache
+from app.core.cache_manager import prompt_cache, tool_cache
 from prisma import Prisma
 import logging
 
