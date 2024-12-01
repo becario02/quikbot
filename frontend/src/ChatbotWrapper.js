@@ -40,15 +40,16 @@ const ChatbotWrapper = () => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
-      }
-
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.detail);
+      }
+      
       chatbotRef.current?.addBotResponse(data.response);
     } catch (error) {
-      console.error('Error al enviar mensaje al servidor:', error);
-      chatbotRef.current?.addBotResponse('Lo siento, ha ocurrido un error al procesar tu mensaje.');
+      const errorMessage = error.message;
+      chatbotRef.current?.addBotResponse(errorMessage);
     }
   }, [sessionId, getGoogleToken]);
 

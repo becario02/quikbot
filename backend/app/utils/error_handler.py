@@ -7,7 +7,7 @@ class ChatError:
         self.error_messages = {
             # Errores de autenticación
             "google_token_invalid": (
-                "Lo siento, parece que tu sesión ha expirado 😅\n\n"
+                "¡Ups! Parece que tu sesión ha expirado 😅\n\n"
                 "Por favor, intenta cerrar sesión y volver a ingresar para continuar nuestra conversación."
             ),
             "token_invalid": (
