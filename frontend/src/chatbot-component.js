@@ -888,132 +888,136 @@ class ChatbotComponent extends HTMLElement {
     addNextCharacter();
   }  
 
-  addMessage(sender, text) {
+  addMessage(sender, text, type = 'normal') {
     const messages = this.shadowRoot.getElementById('chat-messages');
     const messageElement = document.createElement('div');
     const messageId = Date.now().toString();
     
-    // Guardar el mensaje en el historial
+    // Guardar todos los mensajes en el historial
     this.messageHistory = this.messageHistory || [];
     this.messageHistory.push({
-      id: messageId,
-      sender,
-      text,
-      timestamp: new Date().toISOString()
+        id: messageId,
+        sender,
+        text,
+        type,  // Podemos guardar el tipo también para referencia
+        timestamp: new Date().toISOString()
     });
 
     // Si es un mensaje del bot, asociarlo con el último mensaje del usuario
     if (sender === 'Bot' && this.messageHistory.length > 1) {
-      const lastUserMessage = this.messageHistory
-        .slice()
-        .reverse()
-        .find(msg => msg.sender === 'Usuario');
-      if (lastUserMessage) {
-        this.messageHistory[this.messageHistory.length - 1].userQuery = lastUserMessage;
-      }
+        const lastUserMessage = this.messageHistory
+            .slice()
+            .reverse()
+            .find(msg => msg.sender === 'Usuario');
+        if (lastUserMessage) {
+            this.messageHistory[this.messageHistory.length - 1].userQuery = lastUserMessage;
+        }
     }
     
     if (sender === 'Usuario') {
-      messageElement.classList.add('message', 'user-message');
-      messageElement.textContent = text;
-      messages.appendChild(messageElement);
+        messageElement.classList.add('message', 'user-message');
+        messageElement.textContent = text;
+        messages.appendChild(messageElement);
     } else {
-      const botMessageContainer = document.createElement('div');
-      botMessageContainer.classList.add('bot-message-container');
-      
-      const botMessageGroup = document.createElement('div');
-      botMessageGroup.classList.add('bot-message-group');
-      
-      const botAvatar = document.createElement('div');
-      botAvatar.classList.add('bot-avatar');
-      botAvatar.innerHTML = `
-        <svg viewBox="180 50 270 270" xmlns="http://www.w3.org/2000/svg">
-          <g>
-            <path class="st4" d="M429.8,164.5c0-62.8-50.9-113.8-113.8-113.8c-28.8,0-55,10.7-75,28.3c54.4,48.5,121.5,86.4,187,105.6 C429.2,178,429.8,171.3,429.8,164.5z"/>
-            <path class="st4" d="M202.9,176.2c5.9,57.3,54.3,102.1,113.2,102.1c41.5,0,77.7-22.2,97.6-55.3c-1.6,0-3.2,0-4.9,0 C369.9,223,287.3,217.4,202.9,176.2z"/>
-            <g>
-              <path class="st3" d="M435.1,195.5c-3-0.8-5.9-1.7-8.9-2.6c0-0.1,0-0.2,0.1-0.2c-11.6-3.4-23.2-7.3-34.9-11.8 c-0.3-0.1-0.6-0.2-0.9-0.4c-3.5-1.4-6.9-2.7-10.4-4.2c-51.7-21.6-102.4-53.4-145.2-91.7c-2.1-1.9-4.2-3.8-6.3-5.8 c-20,18.7-35.4,58.4-36.5,79.9c-0.1,1.1-0.1,2.2,0,3.3c0.6,0.3,1.1,0.6,1.7,0.9l0.2-0.5c2.7,1.5,5.5,2.8,8.2,4.2 c92.3,46.3,183.2,48.8,215.9,47.9c5.8-0.2,9.8-0.4,11.7-0.6l0,0.1c0.1,0,0.2,0,0.3,0c0.2-0.5,0.5-1.2,0.8-1.9 C432.6,208.1,434.8,201,435.1,195.5L435.1,195.5z"/>
-            </g>
-          </g>
-        </svg>
-      `;
-      
-      messageElement.classList.add('message', 'bot-message');
-      messageElement.innerHTML = this.parseMarkdown(text);
+        const botMessageContainer = document.createElement('div');
+        botMessageContainer.classList.add('bot-message-container');
+        
+        const botMessageGroup = document.createElement('div');
+        botMessageGroup.classList.add('bot-message-group');
+        
+        const botAvatar = document.createElement('div');
+        botAvatar.classList.add('bot-avatar');
+        botAvatar.innerHTML = `
+            <svg viewBox="180 50 270 270" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <path class="st4" d="M429.8,164.5c0-62.8-50.9-113.8-113.8-113.8c-28.8,0-55,10.7-75,28.3c54.4,48.5,121.5,86.4,187,105.6 C429.2,178,429.8,171.3,429.8,164.5z"/>
+                    <path class="st4" d="M202.9,176.2c5.9,57.3,54.3,102.1,113.2,102.1c41.5,0,77.7-22.2,97.6-55.3c-1.6,0-3.2,0-4.9,0 C369.9,223,287.3,217.4,202.9,176.2z"/>
+                    <g>
+                        <path class="st3" d="M435.1,195.5c-3-0.8-5.9-1.7-8.9-2.6c0-0.1,0-0.2,0.1-0.2c-11.6-3.4-23.2-7.3-34.9-11.8 c-0.3-0.1-0.6-0.2-0.9-0.4c-3.5-1.4-6.9-2.7-10.4-4.2c-51.7-21.6-102.4-53.4-145.2-91.7c-2.1-1.9-4.2-3.8-6.3-5.8 c-20,18.7-35.4,58.4-36.5,79.9c-0.1,1.1-0.1,2.2,0,3.3c0.6,0.3,1.1,0.6,1.7,0.9l0.2-0.5c2.7,1.5,5.5,2.8,8.2,4.2 c92.3,46.3,183.2,48.8,215.9,47.9c5.8-0.2,9.8-0.4,11.7-0.6l0,0.1c0.1,0,0.2,0,0.3,0c0.2-0.5,0.5-1.2,0.8-1.9 C432.6,208.1,434.8,201,435.1,195.5L435.1,195.5z"/>
+                    </g>
+                </g>
+            </svg>
+        `;
+        
+        messageElement.classList.add('message', 'bot-message');
+        messageElement.innerHTML = this.parseMarkdown(text);
 
-       // Agregar event listeners a todos los enlaces dentro del mensaje
-       const links = messageElement.querySelectorAll('a');
-       links.forEach(link => {
-         link.addEventListener('click', (e) => {
-           e.preventDefault();
-           const url = link.getAttribute('href');
-           if (url) {
-             this.openPDFInNewTab(url);
-           }
-         });
-       });
-      
-      // Agregar botones de feedback
-      const messageFooter = document.createElement('div');
-      messageFooter.classList.add('message-footer');
-      
-      const feedbackText = document.createElement('div');
-      feedbackText.classList.add('feedback-text');
-      feedbackText.textContent = 'Generada por IA. Verifica que la información sea correcta.';
-      
-      const feedbackButtons = document.createElement('div');
-      feedbackButtons.classList.add('feedback-buttons');
-      
-      feedbackButtons.innerHTML = `
-        <button class="feedback-button like" data-message-id="${messageId}" title="Me fue útil">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-          </svg>
-        </button>
-        <button class="feedback-button dislike" data-message-id="${messageId}" title="No me fue útil">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
-          </svg>
-        </button>
-      `;
+        // Agregar event listeners a todos los enlaces dentro del mensaje
+        const links = messageElement.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = link.getAttribute('href');
+                if (url) {
+                    this.openPDFInNewTab(url);
+                }
+            });
+        });
 
-      messageFooter.appendChild(feedbackText);
-      messageFooter.appendChild(feedbackButtons);
-      
-      botMessageGroup.appendChild(botAvatar);
-      botMessageGroup.appendChild(messageElement);
-      botMessageContainer.appendChild(botMessageGroup);
-      botMessageContainer.appendChild(messageFooter);
-      
-      const coordinates = this.parseCoordinates(text);
-      if (coordinates) {
-        const mapContainer = document.createElement('div');
-        mapContainer.classList.add('map-container');
-        mapContainer.id = `map-${this.mapCounter++}`;
-        botMessageContainer.appendChild(mapContainer);
-        this.initMap(mapContainer.id, coordinates.latitude, coordinates.longitude);
-      }
-      
-      messages.appendChild(botMessageContainer);
+        botMessageGroup.appendChild(botAvatar);
+        botMessageGroup.appendChild(messageElement);
+        botMessageContainer.appendChild(botMessageGroup);
+        
+        // Solo agregar el footer para mensajes normales
+        if (type === 'normal') {
+            const messageFooter = document.createElement('div');
+            messageFooter.classList.add('message-footer');
+            
+            const feedbackText = document.createElement('div');
+            feedbackText.classList.add('feedback-text');
+            feedbackText.textContent = 'Generada por IA. Verifica que la información sea correcta.';
+            
+            const feedbackButtons = document.createElement('div');
+            feedbackButtons.classList.add('feedback-buttons');
+            
+            feedbackButtons.innerHTML = `
+                <button class="feedback-button like" data-message-id="${messageId}" title="Me fue útil">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                    </svg>
+                </button>
+                <button class="feedback-button dislike" data-message-id="${messageId}" title="No me fue útil">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
+                    </svg>
+                </button>
+            `;
 
-      // Agregar event listeners para los botones de feedback
-      const likeButton = feedbackButtons.querySelector('.like');
-      const dislikeButton = feedbackButtons.querySelector('.dislike');
-      
-      likeButton.addEventListener('click', () => {
-        likeButton.classList.add('selected');
-        dislikeButton.classList.remove('selected');
-      });
-      
-      dislikeButton.addEventListener('click', () => {
-        dislikeButton.classList.add('selected');
-        likeButton.classList.remove('selected');
-        this.handleDislike(messageId, text);
-      });
+            messageFooter.appendChild(feedbackText);
+            messageFooter.appendChild(feedbackButtons);
+            
+            // Agregar event listeners para los botones de feedback
+            const likeButton = feedbackButtons.querySelector('.like');
+            const dislikeButton = feedbackButtons.querySelector('.dislike');
+            
+            likeButton.addEventListener('click', () => {
+                likeButton.classList.add('selected');
+                dislikeButton.classList.remove('selected');
+            });
+            
+            dislikeButton.addEventListener('click', () => {
+                dislikeButton.classList.add('selected');
+                likeButton.classList.remove('selected');
+                this.handleDislike(messageId, text);
+            });
+
+            botMessageContainer.appendChild(messageFooter);
+        }
+        
+        const coordinates = this.parseCoordinates(text);
+        if (coordinates) {
+            const mapContainer = document.createElement('div');
+            mapContainer.classList.add('map-container');
+            mapContainer.id = `map-${this.mapCounter++}`;
+            botMessageContainer.appendChild(mapContainer);
+            this.initMap(mapContainer.id, coordinates.latitude, coordinates.longitude);
+        }
+        
+        messages.appendChild(botMessageContainer);
     }
     
     messages.scrollTop = messages.scrollHeight;
-}
+  }
 
 handleDislike(messageId, messageText) {
     // Encontrar el mensaje del bot y su pregunta asociada
@@ -1189,9 +1193,9 @@ handleDislike(messageId, messageText) {
     }
   }
 
-  addBotResponse(text) {
+  addBotResponse(text, type = 'normal') {
     this.hideTypingIndicator();
-    this.addMessage('Bot', text);
+    this.addMessage('Bot', text, type);
   }
 
   initMap(containerId, lat, lng) {

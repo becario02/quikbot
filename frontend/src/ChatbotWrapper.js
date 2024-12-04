@@ -49,7 +49,7 @@ const ChatbotWrapper = () => {
       chatbotRef.current?.addBotResponse(data.response);
     } catch (error) {
       const errorMessage = error.message;
-      chatbotRef.current?.addBotResponse(errorMessage);
+      chatbotRef.current?.addBotResponse(errorMessage, 'error');
     }
   }, [sessionId, getGoogleToken]);
 
@@ -63,7 +63,7 @@ const ChatbotWrapper = () => {
 
     if (!hasShownGreeting) {
       const initialGreeting = `¡Hola ${user?.name || ''}! 👋\n\nComo miembro del equipo de soporte, tienes acceso completo a toda la información del sistema. ¿En qué puedo ayudarte?`;
-      chatbotElement.addBotResponse(initialGreeting);
+      chatbotElement.addBotResponse(initialGreeting, 'greeting');
       setHasShownGreeting(true);
     }
 
