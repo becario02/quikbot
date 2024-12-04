@@ -20,3 +20,12 @@ model ToolDescription {
   description   String   @db.Text
   lastUpdated   DateTime @updatedAt
 }
+
+model Feedback {
+  id          Int      @id @default(autoincrement())
+  userQuery   String   @db.Text
+  botResponse String   @db.Text
+  reason      String
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now())
+}

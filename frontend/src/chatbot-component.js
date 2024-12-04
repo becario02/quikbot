@@ -5,6 +5,7 @@ class ChatbotComponent extends HTMLElement {
     this.isOpen = false;
     this.isTyping = false;
     this.mapCounter = 0;
+    this.messageHistory = [];
   }
 
   connectedCallback() {
@@ -125,6 +126,310 @@ class ChatbotComponent extends HTMLElement {
           font-family: 'Segoe UI', 'Roboto', sans-serif;
           z-index: 1000;
           pointer-events: none;
+        }
+
+        .message-footer {
+          margin-top: 8px;
+          padding-left: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .feedback-text {
+          color: #666;
+          font-size: 12px;
+        }
+
+        .feedback-buttons {
+          display: flex;
+          gap: 8px;
+        }
+
+        .feedback-button {
+          background: none;
+          border: none;
+          padding: 6px;
+          cursor: pointer;
+          border-radius: 4px;
+          color: #666;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+        }
+
+        .feedback-button:hover {
+          background-color: #f5f5f5;
+        }
+
+        .feedback-button.selected {
+          color: var(--primary-color);
+          background-color: rgba(0, 157, 224, 0.1);
+        }
+
+        .feedback-button.like.selected {
+          color: #52c41a;
+          background-color: rgba(82, 196, 26, 0.1);
+        }
+
+        .feedback-button.dislike.selected {
+          color: #ff4d4f;
+          background-color: rgba(255, 77, 79, 0.1);
+        }
+
+        .message-wrapper {
+          position: relative;
+          flex-grow: 1;
+        }
+
+        .message-controls {
+          position: absolute;
+          right: -30px;
+          top: 50%;
+          transform: translateY(-50%);
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+
+        .message-wrapper:hover .message-controls {
+          opacity: 1;
+        }
+
+        .dislike-button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px;
+          color: #666;
+          transition: color 0.2s ease;
+        }
+
+        .dislike-button:hover {
+          color: #ff4d4f;
+        }
+
+        .feedback-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          opacity: 0;
+          animation: modalFadeIn 0.3s ease forwards;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 500px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+          overflow: hidden;
+          position: relative;
+          transform: translateY(20px);
+          animation: modalSlideIn 0.3s ease forwards;
+        }
+
+        .modal-header {
+          padding: 20px 24px 10px 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .modal-header h2 {
+          margin: 0;
+          font-size: 18px;
+          color: #333;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: #666;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1;
+        }
+
+        .modal-body {
+          padding: 24px;
+        }
+
+        .modal-description {
+          color: #666;
+          margin: 0 0 20px 0;
+          font-size: 14px;
+        }
+
+        .feedback-section {
+          margin-bottom: 24px;
+        }
+
+        .feedback-section label {
+          display: block;
+          font-weight: 500;
+          margin-bottom: 12px;
+          color: #333;
+        }
+
+        .feedback-options {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 8px;
+        }
+
+        .feedback-option {
+          width: 100%;
+          background: none;
+          border: 1px solid #e8e8e8;
+          border-radius: 6px;
+          padding: 12px 16px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          color: #333;
+          box-sizing: border-box;
+          font-size: 14px;
+        }
+
+        .feedback-option:hover {
+          background-color: #f5f8ff;
+          border-color: var(--primary-color);
+        }
+
+        .feedback-option.selected {
+          background-color: #e6f7ff;
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+        }
+
+        #feedback-text {
+          width: 100%;
+          height: 80px;
+          padding: 12px;
+          border: 1px solid #e8e8e8;
+          border-radius: 6px;
+          font-family: inherit;
+          font-size: 14px;
+          resize: none;
+          box-sizing: border-box;
+          margin-top: 8px;
+        }
+
+        #feedback-text:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(0, 157, 224, 0.1);
+        }
+
+        .modal-footer {
+          padding: 16px 24px;
+          margin-top: -34px;
+        }
+
+        .submit-button {
+          width: 100%;
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          padding: 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          font-size: 14px;
+        }
+
+        .submit-button:disabled {
+          background-color: #e8e8e8;
+          cursor: not-allowed;
+        }
+
+        .submit-button:not(:disabled):hover {
+          background-color: #40a9ff;
+        }
+
+        .modal-closing {
+          animation: modalFadeOut 0.3s ease forwards;
+        }
+
+        .modal-closing .modal-content {
+          animation: modalSlideOut 0.3s ease forwards;
+        }
+
+        @keyframes modalFadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes modalSlideIn {
+          from {
+            transform: translateY(20px);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes modalFadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+
+        @keyframes modalSlideOut {
+          from {
+            transform: translateY(0);
+          }
+          to {
+            transform: translateY(20px);
+          }
+        }
+        .notification {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          padding: 12px 24px;
+          border-radius: 8px;
+          color: white;
+          z-index: 1000;
+          animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.success {
+          background-color: #52c41a;
+        }
+
+        .notification.error {
+          background-color: #ff4d4f;
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
 
         #chat-container {
@@ -397,7 +702,7 @@ class ChatbotComponent extends HTMLElement {
         .map-container {
           width: 80%;
           height: 230px;
-          margin: 10px 0px 10px 40px;
+          margin: 20px 0px 10px 40px;
           border-radius: 10px;
           position: relative;
           overflow: hidden;
@@ -586,6 +891,27 @@ class ChatbotComponent extends HTMLElement {
   addMessage(sender, text) {
     const messages = this.shadowRoot.getElementById('chat-messages');
     const messageElement = document.createElement('div');
+    const messageId = Date.now().toString();
+    
+    // Guardar el mensaje en el historial
+    this.messageHistory = this.messageHistory || [];
+    this.messageHistory.push({
+      id: messageId,
+      sender,
+      text,
+      timestamp: new Date().toISOString()
+    });
+
+    // Si es un mensaje del bot, asociarlo con el último mensaje del usuario
+    if (sender === 'Bot' && this.messageHistory.length > 1) {
+      const lastUserMessage = this.messageHistory
+        .slice()
+        .reverse()
+        .find(msg => msg.sender === 'Usuario');
+      if (lastUserMessage) {
+        this.messageHistory[this.messageHistory.length - 1].userQuery = lastUserMessage;
+      }
+    }
     
     if (sender === 'Usuario') {
       messageElement.classList.add('message', 'user-message');
@@ -614,22 +940,50 @@ class ChatbotComponent extends HTMLElement {
       
       messageElement.classList.add('message', 'bot-message');
       messageElement.innerHTML = this.parseMarkdown(text);
+
+       // Agregar event listeners a todos los enlaces dentro del mensaje
+       const links = messageElement.querySelectorAll('a');
+       links.forEach(link => {
+         link.addEventListener('click', (e) => {
+           e.preventDefault();
+           const url = link.getAttribute('href');
+           if (url) {
+             this.openPDFInNewTab(url);
+           }
+         });
+       });
       
-      // Agregar event listeners a todos los enlaces dentro del mensaje
-      const links = messageElement.querySelectorAll('a');
-      links.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const url = link.getAttribute('href');
-          if (url) {
-            this.openPDFInNewTab(url);
-          }
-        });
-      });
+      // Agregar botones de feedback
+      const messageFooter = document.createElement('div');
+      messageFooter.classList.add('message-footer');
+      
+      const feedbackText = document.createElement('div');
+      feedbackText.classList.add('feedback-text');
+      feedbackText.textContent = 'Generada por IA. Verifica que la información sea correcta.';
+      
+      const feedbackButtons = document.createElement('div');
+      feedbackButtons.classList.add('feedback-buttons');
+      
+      feedbackButtons.innerHTML = `
+        <button class="feedback-button like" data-message-id="${messageId}" title="Me fue útil">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+          </svg>
+        </button>
+        <button class="feedback-button dislike" data-message-id="${messageId}" title="No me fue útil">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
+          </svg>
+        </button>
+      `;
+
+      messageFooter.appendChild(feedbackText);
+      messageFooter.appendChild(feedbackButtons);
       
       botMessageGroup.appendChild(botAvatar);
       botMessageGroup.appendChild(messageElement);
       botMessageContainer.appendChild(botMessageGroup);
+      botMessageContainer.appendChild(messageFooter);
       
       const coordinates = this.parseCoordinates(text);
       if (coordinates) {
@@ -641,9 +995,154 @@ class ChatbotComponent extends HTMLElement {
       }
       
       messages.appendChild(botMessageContainer);
+
+      // Agregar event listeners para los botones de feedback
+      const likeButton = feedbackButtons.querySelector('.like');
+      const dislikeButton = feedbackButtons.querySelector('.dislike');
+      
+      likeButton.addEventListener('click', () => {
+        likeButton.classList.add('selected');
+        dislikeButton.classList.remove('selected');
+      });
+      
+      dislikeButton.addEventListener('click', () => {
+        dislikeButton.classList.add('selected');
+        likeButton.classList.remove('selected');
+        this.handleDislike(messageId, text);
+      });
     }
     
     messages.scrollTop = messages.scrollHeight;
+}
+
+handleDislike(messageId, messageText) {
+    // Encontrar el mensaje del bot y su pregunta asociada
+    const botMessage = this.messageHistory.find(msg => msg.id === messageId);
+    const userQuery = botMessage?.userQuery?.text || 'No disponible';
+
+    const feedbackModal = document.createElement('div');
+    feedbackModal.classList.add('feedback-modal');
+    feedbackModal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Dejar comentarios</h2>
+          <button class="close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">
+            Estamos trabajando para mejorar la calidad de las respuestas.
+            Puedes colaborar respondiendo las preguntas a continuación:
+          </p>
+
+          <div class="feedback-section">
+            <label>¿Qué tenía de malo la respuesta que recibiste?</label>
+            <div class="feedback-options">
+              <button class="feedback-option" data-reason="irrelevant">
+                No se relacionaba con mi pregunta
+              </button>
+              <button class="feedback-option" data-reason="inappropriate">
+                La respuesta fue ofensiva o inapropiada
+              </button>
+              <button class="feedback-option" data-reason="unhelpful">
+                No me fue útil
+              </button>
+            </div>
+          </div>
+
+          <div class="feedback-section">
+            <label>¿Cuál hubiera sido una mejor respuesta? (opcional)</label>
+            <textarea id="feedback-text" placeholder="Escribe tus comentarios aquí..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="submit-button" disabled>Enviar</button>
+        </div>
+      </div>
+    `;
+
+    this.shadowRoot.appendChild(feedbackModal);
+
+    const closeButton = feedbackModal.querySelector('.close-button');
+    const submitButton = feedbackModal.querySelector('.submit-button');
+    const options = feedbackModal.querySelectorAll('.feedback-option');
+    const textArea = feedbackModal.querySelector('#feedback-text');
+    let selectedReason = null;
+
+    const closeModal = () => {
+      feedbackModal.classList.add('modal-closing');
+      setTimeout(() => {
+        feedbackModal.remove();
+      }, 300);
+    };
+
+    feedbackModal.addEventListener('click', (e) => {
+      if (e.target === feedbackModal) {
+        closeModal();
+      }
+    });
+
+    closeButton.addEventListener('click', closeModal);
+
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        options.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedReason = option.dataset.reason;
+        submitButton.disabled = false;
+      });
+    });
+
+    submitButton.addEventListener('click', async () => {
+      if (!selectedReason) return;
+      submitButton.disabled = true;
+    
+      try {
+        closeModal();
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Si necesitas autenticación, agrega el header aquí
+            // 'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify({
+            userQuery,
+            botResponse: messageText,
+            reason: selectedReason,
+            comment: textArea.value || null
+          })
+        });
+    
+        if (!response.ok) {
+          throw new Error('Error al enviar feedback');
+        }
+    
+        const data = await response.json();
+        if (data.status === 'success') {
+          this.showNotification('Gracias por tus comentarios');
+        } else {
+          throw new Error('Error en la respuesta del servidor');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.showNotification('Error al enviar los comentarios', 'error');
+      } finally {
+        closeModal();
+      }
+    });
+}
+
+  showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.classList.add('notification', type);
+    notification.textContent = message;
+    this.shadowRoot.appendChild(notification);
+
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
   }
 
   async openPDFInNewTab(url) {
