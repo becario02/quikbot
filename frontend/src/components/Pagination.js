@@ -4,13 +4,13 @@ import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from 'lucide-r
 const Pagination = ({ 
   currentPage, 
   totalPages, 
-  files, 
-  totalFiles, 
+  items,
+  totalItems,
   setCurrentPage 
 }) => (
   <div className="pagination-container">
     <div className="pagination-info">
-      Mostrando {files.length} de {totalFiles} archivos
+      Mostrando {items.length} de {totalItems} registros
     </div>
     <div className="pagination-controls">
       <button

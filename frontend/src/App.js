@@ -5,6 +5,7 @@ import { AuthProvider        } from './components/AuthProvider'
 import ProtectedRoute          from './components/ProtectedRoute'
 import HomePage        from './pages/HomePage'
 import DashboardLayout from './components/DashboardLayout'
+import Feedback        from './pages/Feedback'
 import Files           from './pages/Files'
 import AgentConfig     from './pages/AgentConfig'
 import ChatbotWrapper  from './ChatbotWrapper'
@@ -30,9 +31,9 @@ function App() {
             >
               {/* Redirigir /dashboard a /dashboard/files */}
               <Route index element={<Navigate to="/dashboard/files" replace />} />
-              {/* Ruta de Files */}
+              {/* Rutas existentes */}
+              <Route path="feedback" element={<Feedback />} />
               <Route path="files" element={<Files />} />
-              {/* Nueva ruta para la configuración del agente */}
               <Route path="agent-config" element={<AgentConfig />} />
             </Route>
 

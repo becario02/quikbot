@@ -316,8 +316,8 @@ const Files = () => {
             <Pagination 
               currentPage={currentPage}
               totalPages={totalPages}
-              files={files}
-              totalFiles={totalFiles}
+              items={files}
+              totalItems={totalFiles}
               setCurrentPage={setCurrentPage}
             />
           </>

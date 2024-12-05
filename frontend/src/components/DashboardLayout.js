@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, Outlet } from 'react-router-dom';
-import { Layout, FileText, Bot, Home, LogOut}
+import { Layout, MessageSquare, FileText, Bot, Home, LogOut}
 from 'lucide-react';
 import { useAuth } from './AuthProvider';
 
@@ -18,6 +18,7 @@ const DashboardLayout = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <Layout size={18} />, path: "/dashboard", exact: true },
+    { name: "Feedback", icon: <MessageSquare size={18} />, path: "/dashboard/feedback" },
     { name: "Archivos", icon: <FileText size={18} />, path: "/dashboard/files" },
     { name: "Configuración", icon: <Bot size={18} />, path: "/dashboard/agent-config" },
   ];
