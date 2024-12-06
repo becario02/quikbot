@@ -1,6 +1,7 @@
 from typing import Tuple, Optional
 import logging
 from fastapi import HTTPException
+from app.utils.email_notification import email_notifier
 
 class ChatError:
     def __init__(self):
@@ -29,6 +30,12 @@ class ChatError:
                 "¡Disculpa! Tu mensaje es demasiado largo para procesarlo 📝\n\n"
                 "¿Podrías dividirlo en mensajes más cortos? Esto me ayudará a responderte mejor."
             ),
+            # Nuevo error para cuota excedida de OpenAI
+            "insufficient_quota": (
+                "🚫 Lo sentimos, el servicio está experimentando limitaciones técnicas en este momento.\n\n"
+                "Nuestro equipo ha sido notificado y estamos trabajando para resolverlo. "
+                "Por favor, intenta nuevamente en unos minutos."
+            ),
             
             # Error por defecto
             "default": (
@@ -38,9 +45,10 @@ class ChatError:
             )
         }
 
-    def parse_error(self, error: Exception) -> Tuple[str, int]:
+    async def parse_error(self, error: Exception) -> Tuple[str, int]:
         """
         Analiza el error y retorna un mensaje apropiado para el usuario y el código HTTP.
+        También envía notificaciones por correo para errores críticos.
         """
         error_str = str(error)
         logging.error(f"Error en chat_endpoint: {error_str}")
@@ -54,7 +62,11 @@ class ChatError:
             return self.error_messages["unauthorized"], 403
 
         # Errores de OpenAI
-        if "rate_limit_exceeded" in error_str:
+        if "insufficient_quota" in error_str:
+            # Enviar notificación por correo
+            await email_notifier.send_quota_exceeded_notification(error_str)
+            return self.error_messages["insufficient_quota"], 429
+        elif "rate_limit_exceeded" in error_str:
             return self.error_messages["rate_limit_exceeded"], 429
         elif "context_length_exceeded" in error_str or "maximum context length" in error_str:
             return self.error_messages["context_length_exceeded"], 400

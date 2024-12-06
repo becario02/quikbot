@@ -66,5 +66,5 @@ async def chat_endpoint(
     
     except Exception as e:
         # Usar el manejador de errores para obtener el mensaje y código apropiados
-        error_message, status_code = chat_error_handler.parse_error(e)
+        error_message, status_code = await chat_error_handler.parse_error(e)
         raise HTTPException(status_code=status_code, detail=error_message)

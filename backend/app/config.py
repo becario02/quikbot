@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     QDRANT_COLLECTION_NAME: str
     DATABASE_URL: str 
     BLOB_READ_WRITE_TOKEN: str
+    NOTIFICATION_EMAIL: str
+    NOTIFICATION_EMAIL_PASSWORD: str
     CORS_ORIGINS: list = ["*"]
 
     class Config:
