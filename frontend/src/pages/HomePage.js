@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
-import { MessageSquare, Bot, Brain, Shield, ArrowRight, LogOut } from 'lucide-react';
+import { ArrowRight, LogOut } from 'lucide-react';
+import AboutSection from '../components/AboutSection';
+import FeaturesSection from '../components/FeaturesSection';
 import robotHero from '../assets/images/robot-hero.png';
 import advanLogo from '../assets/svg/advan-logo.svg';
 
@@ -43,29 +45,6 @@ const HomePage = () => {
       Iniciar sesión con Google
     </button>
   );
-
-  const features = [
-    {
-      icon: <Bot size={24} />,
-      title: "IA Avanzada",
-      description: "Respuestas precisas y contextuales gracias a nuestra IA de última generación"
-    },
-    {
-      icon: <Brain size={24} />,
-      title: "Aprendizaje Continuo",
-      description: "Mejora constante basada en las interacciones con los usuarios"
-    },
-    {
-      icon: <Shield size={24} />,
-      title: "Seguridad Garantizada",
-      description: "Protección de datos y cifrado de extremo a extremo"
-    },
-    {
-      icon: <MessageSquare size={24} />,
-      title: "Soporte 24/7",
-      description: "Asistencia ininterrumpida para tus usuarios"
-    }
-  ];
 
   return (
     <div className="landing-container" key={key}>
@@ -118,21 +97,9 @@ const HomePage = () => {
         </div>
       </section>
       
-      {/* Features Section */}
-      <section className="features-section">
-        <h2>Características Principales</h2>
-        <div className="features-grid">
-          {features.map((feature, index) => (
-            <div key={index} className="feature-card">
-              <div className="feature-icon">
-                {feature.icon}
-              </div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <AboutSection />
+      
+      <FeaturesSection />
 
       {/* CTA Section */}
       <section className="cta-section">
