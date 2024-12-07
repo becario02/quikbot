@@ -63,7 +63,7 @@ const AboutSection = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .about-section {
           display: grid;
           grid-template-columns: 1fr 1fr;

@@ -93,7 +93,7 @@ const FeaturesSection = () => {
         ))}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .features-section {
           padding: 100px 80px;
           background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
