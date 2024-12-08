@@ -22,7 +22,7 @@ const AboutSection = () => {
         </p>
         
         <div className="mission-vision">
-          <div className="info-card scale-in delay-2">
+          <div className="info-card fade-in delay-2">
             <div className="icon-wrapper">
               <div className="icon" />
             </div>
@@ -33,7 +33,7 @@ const AboutSection = () => {
             </p>
           </div>
 
-          <div className="info-card scale-in delay-3">
+          <div className="info-card fade-in delay-3">
             <div className="icon-wrapper">
               <div className="icon" />
             </div>
