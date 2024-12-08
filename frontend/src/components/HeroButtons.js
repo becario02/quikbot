@@ -12,23 +12,7 @@ const HeroButtons = ({ user, hasAdminAccess, navigate, login }) => {
   return (
     <div className="hero-buttons">
       {user ? (
-        hasAdminAccess && (
-          <>
-            <button 
-              className="primary-button"
-              onClick={openChat}
-            >
-              Iniciar Chat <Bot size={20} />
-            </button>
-            <button 
-              className="secondary-button"
-              onClick={() => navigate('/dashboard')}
-            >
-              QuikBot Panel <ArrowRight size={20} />
-            </button>
-          </>
-        )
-      ) : (
+        // Usuario autenticado
         <>
           <button 
             className="primary-button"
@@ -36,13 +20,23 @@ const HeroButtons = ({ user, hasAdminAccess, navigate, login }) => {
           >
             Iniciar Chat <Bot size={20} />
           </button>
-          <button 
-            className="secondary-button"
-            onClick={() => login()}
-          >
-            Iniciar con Google <ArrowRight size={20} />
-          </button>
+          {hasAdminAccess && (
+            <button 
+              className="secondary-button"
+              onClick={() => navigate('/dashboard')}
+            >
+              QuikBot Panel <ArrowRight size={20} />
+            </button>
+          )}
         </>
+      ) : (
+        // Usuario no autenticado
+        <button 
+          className="secondary-button"
+          onClick={() => login()}
+        >
+          Iniciar con Google <ArrowRight size={20} />
+        </button>
       )}
 
       <style>{`
