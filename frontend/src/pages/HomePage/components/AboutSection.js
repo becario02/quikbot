@@ -1,4 +1,5 @@
 import React from 'react';
+import { Ticket, FileText } from 'lucide-react';
 
 const AboutSection = () => {
     const images = [
@@ -24,23 +25,23 @@ const AboutSection = () => {
         <div className="mission-vision">
           <div className="info-card fade-in delay-2">
             <div className="icon-wrapper">
-              <div className="icon" />
+              <Ticket size={24}  color="#009DE0" />
             </div>
-            <h3>Nuestra Misión</h3>
+            <h3>Consulta de Tickets</h3>
             <p>
-              Buscamos hacer que la tecnología avanzada de IA sea accesible y fácil de usar,
-              mejorando la experiencia de soporte al cliente.
+              Accede al estado de tus reportes, revisa actualizaciones y obtén información detallada
+              sobre el progreso de tus solicitudes de soporte.
             </p>
           </div>
 
           <div className="info-card fade-in delay-3">
             <div className="icon-wrapper">
-              <div className="icon" />
+              <FileText size={24}  color="#009DE0" />
             </div>
-            <h3>Nuestra Visión</h3>
+            <h3>Base de Conocimiento</h3>
             <p>
-              Visualizamos un mundo donde la IA se integra perfectamente con el ingenio humano,
-              creando experiencias de soporte excepcionales.
+              Encuentra rápidamente documentación técnica, manuales de usuario y guías paso a paso
+              sobre nuestros sistemas y módulos.
             </p>
           </div>
         </div>
@@ -130,16 +131,6 @@ const AboutSection = () => {
           align-items: center;
           justify-content: center;
           margin-bottom: 16px;
-        }
-
-        .icon {
-          width: 24px;
-          height: 24px;
-          background: var(--primary-color);
-          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/%3E%3C/svg%3E");
-          mask-size: contain;
-          mask-repeat: no-repeat;
-          mask-position: center;
         }
 
         .info-card h3 {
