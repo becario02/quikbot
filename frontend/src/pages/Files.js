@@ -221,6 +221,7 @@ const Files = () => {
           style={{ display: 'none' }}
           id="file-upload"
           disabled={isUploading}
+          accept=".pdf,.doc,.docx"
         />
         <label htmlFor="file-upload" className={`upload-button ${isUploading ? 'uploading' : ''}`}>
           {isUploading ? (
