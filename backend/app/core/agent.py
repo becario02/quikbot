@@ -39,7 +39,7 @@ async def initialize_agent(username: Optional[str] = None):
     tools = sql_tools + vectorstore_tools
 
     # Configurar el chat
-    chat = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0)
+    chat = ChatOpenAI(model="gpt-4-1106-preview", temperature=0)
 
     # Crear el prompt apropiado
     prompt = await create_prompt(username)
