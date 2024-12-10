@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Bot, Brain, Shield, MessageSquare } from 'lucide-react';
+import { Mic, ThumbsUp, Files, Map } from 'lucide-react';
 
 const FeaturesSection = () => {
   const sectionRef = useRef(null);
@@ -7,27 +7,27 @@ const FeaturesSection = () => {
 
   const features = [
     {
-      icon: <Bot />,
-      title: "IA Avanzada",
-      description: "Respuestas precisas y contextuales gracias a nuestra IA de última generación que aprende y mejora constantemente.",
+      icon: <Mic />,
+      title: "Control por Voz",
+      description: "Interactúa con el asistente mediante comandos de voz, permitiendo realizar consultas y obtener respuestas de forma natural y manos libres.",
       color: "#009de0"
     },
     {
-      icon: <Brain />,
-      title: "Aprendizaje Continuo",
-      description: "Sistema que evoluciona y se adapta basado en las interacciones con usuarios, mejorando constantemente su precisión.",
+      icon: <ThumbsUp />,
+      title: "Feedback Inteligente",
+      description: "Sistema de retroalimentación que aprende de las interacciones para mejorar constantemente la precisión y calidad de las respuestas.",
       color: "#00b8a9"
     },
     {
-      icon: <Shield />,
-      title: "Seguridad Garantizada",
-      description: "Protección de datos y cifrado de extremo a extremo para garantizar la confidencialidad de todas las conversaciones.",
+      icon: <Files />,
+      title: "Soporte Multi-formato",
+      description: "Visualización integrada de PDFs, documentos y presentaciones directamente en el chat, sin necesidad de aplicaciones externas.",
       color: "#5b7fff"
     },
     {
-      icon: <MessageSquare />,
-      title: "Soporte 24/7",
-      description: "Asistencia ininterrumpida para tus usuarios, proporcionando ayuda instantánea en cualquier momento.",
+      icon: <Map />,
+      title: "Mapas Interactivos",
+      description: "Capacidad de mostrar ubicaciones y mapas interactivos cuando la consulta involucra información geográfica o direcciones.",
       color: "#ff7eb6"
     }
   ];
@@ -66,10 +66,9 @@ const FeaturesSection = () => {
     <section className="features-section" ref={sectionRef}>
       <div className="features-header">
         <span className="section-label">Características</span>
-        <h2>Potenciado por Tecnología Avanzada</h2>
+        <h2>Interacción Avanzada</h2>
         <p className="section-description">
-          Descubre cómo QuikBot revoluciona la atención al cliente con características
-          diseñadas para ofrecer la mejor experiencia.
+          Descubre las múltiples formas de interactuar con QuikBot, diseñadas para hacer tu experiencia más natural y eficiente.
         </p>
       </div>
 
@@ -95,7 +94,7 @@ const FeaturesSection = () => {
 
       <style>{`
         .features-section {
-          padding: 100px 80px;
+          padding: 80px 80px;
           background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
           position: relative;
           overflow: hidden;
@@ -155,12 +154,13 @@ const FeaturesSection = () => {
           position: relative;
           padding: 40px 30px;
           background: white;
-          border-radius: 24px;
+          border-radius: 16px;
           overflow: hidden;
           transition: all 0.5s ease;
           z-index: 1;
           opacity: 0;
           transform: translateY(30px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .feature-card.visible {
@@ -168,13 +168,9 @@ const FeaturesSection = () => {
           transform: translateY(0);
         }
 
-        .feature-card:nth-child(1) { transition-delay: 0.1s; }
-        .feature-card:nth-child(2) { transition-delay: 0.2s; }
-        .feature-card:nth-child(3) { transition-delay: 0.3s; }
-        .feature-card:nth-child(4) { transition-delay: 0.4s; }
-
         .feature-card:hover {
           transform: translateY(-5px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
         .feature-card:hover .feature-background {
@@ -294,6 +290,11 @@ const FeaturesSection = () => {
 
           .feature-card {
             padding: 30px 20px;
+            text-align: center;
+          }
+
+          .feature-icon-wrapper {
+            margin: 0 auto;
           }
         }
       `}</style>

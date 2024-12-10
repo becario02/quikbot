@@ -979,8 +979,13 @@ input[type="file"] {
      ========================================================================== */
 .cta-section {
   text-align: center;
-  padding: 80px;
-  background: linear-gradient(135deg, #f8f9ff 0%, var(--background-color) 100%);
+  padding: 80px 80px 120px 80px;
+  background: transparent;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
 }
 
 .cta-section h2 {
@@ -1279,6 +1284,13 @@ input[type="file"] {
     100% {
       transform: translateY(0px);
     }
+  }
+}
+
+/* Breakpoint - 768px (Tablets grandes) */
+@media (max-width: 1024px) {
+  .hero-visual {
+    display: none;
   }
 }
 

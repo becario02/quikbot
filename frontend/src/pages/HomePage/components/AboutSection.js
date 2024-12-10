@@ -3,23 +3,22 @@ import { Ticket, FileText } from 'lucide-react';
 
 const AboutSection = () => {
     const images = [
-        'https://news.cornell.edu/sites/default/files/styles/story_thumbnail_xlarge/public/2024-07/robot-1280x720_0.jpg?itok=AF6MakCq',
-        'https://empreender.com.br/wp-content/uploads/2024/01/Chatbot-no-e-commerce.jpg',
-        'https://t3.ftcdn.net/jpg/09/73/25/16/360_F_973251611_fD9g05i7vPtK81fQrhmfjpwrgzqmgMTI.jpg',
-        'https://bpract.com/wp-content/uploads/2023/09/ai.webp'
+        'https://www.zucisystems.com/wp-content/uploads/2022/09/Database-2-scaled-1-scaled.webp',
+        'https://intramed.mx/wp-content/uploads/2021/09/En-el-ambito-de-los-Archivos-encontramos-una-gran-variedad-de-normas.jpg',
+        'https://img.freepik.com/fotos-premium/aumentar-eficiencia-agilizacion-gestion-documentos-base-datos-linea-proceso-archivos-mana_983420-276065.jpg',
+        'https://img.freepik.com/premium-vector/data-network-management-isometric-map-with-business-networking-servers-laptop-cloud-storage-data-synchronization-devices-3d-isometric-style-modern-ilustration_172533-24.jpg?semt=ais_hybrid'
     ];
     
 
   return (
     <section className="about-section">
       <div className="about-content">
-        <span className="section-labell fade-in">Sobre Nosotros</span>
-        <h2 className='slide-up delay-1'>Innovando el Futuro con IA</h2>
+        <span className="section-label fade-in">QuikBot</span>
+        <h2 className='slide-up delay-1'>Herramientas Integradas</h2>
         <p className="description slide-up delay-2">
-          En QuikBot, nos apasiona aprovechar el poder de la inteligencia artificial para 
-          transformar la atención al cliente. Fundados en la creencia de que la IA tiene 
-          el potencial de revolucionar las tareas cotidianas, estamos dedicados a desarrollar 
-          soluciones de vanguardia que empoderan tanto a individuos como a empresas.
+          QuikBot integra múltiples herramientas para brindar una experiencia de soporte completa. 
+          Desde consultas sobre módulos y reportes hasta búsqueda avanzada en documentación técnica, 
+          todo en una interfaz conversacional intuitiva.
         </p>
         
         <div className="mission-vision">
@@ -46,7 +45,6 @@ const AboutSection = () => {
           </div>
         </div>
 
-        <button className="more-details fade-in delay-4">Ver Más Detalles</button>
       </div>
 
       <div className="collage-container">
@@ -77,14 +75,17 @@ const AboutSection = () => {
           margin: 0 auto;
         }
 
-        .section-labell {
-          color: var(--primary-color);
+        .section-label {
+          display: inline-block;
+          padding: 8px 16px;
+          background: var(--primary-color);
+          color: white;
+          border-radius: 20px;
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 500;
+          margin-bottom: 24px;
           text-transform: uppercase;
-          letter-spacing: 1.5px;
-          margin-bottom: 16px;
-          display: block;
+          letter-spacing: 1px;
         }
 
         h2 {
@@ -273,6 +274,28 @@ const AboutSection = () => {
           .about-section {
             grid-template-columns: 1fr;
             padding: 40px;
+          }
+
+          .about-content {
+            text-align: center;
+            padding: 0 20px; /* Añadir padding horizontal */
+          }
+
+          h2 {
+            font-size: 28px; /* Reducir tamaño de fuente */
+            text-align: center;
+          }
+
+          .description {
+            font-size: 14px; /* Reducir tamaño de fuente */
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%; /* Asegurar que no se desborde */
+          }
+
+          .icon-wrapper {
+            margin: auto;
           }
 
           .collage-container {
