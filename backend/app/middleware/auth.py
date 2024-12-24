@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import jwt
+import httpx
+import logging
 from fastapi import HTTPException, Security, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Dict, Optional
@@ -14,6 +16,21 @@ class AuthHandler:
             "exp": datetime.utcnow() + timedelta(days=7)
         }
         return jwt.encode(payload, self.secret, algorithm="HS256")
+    
+    async def validate_google_token(self, token: str) -> Dict:
+        """Valida el token de Google y retorna la información del usuario"""
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    headers={"Authorization": f"Bearer {token}"}
+                )
+                if response.status_code != 200:
+                    raise HTTPException(status_code=401, detail="Token de Google inválido")
+                return response.json()
+        except Exception as e:
+            logging.error(f"Error validando token de Google: {str(e)}")
+            raise HTTPException(status_code=401, detail="Token de Google inválido")
     
     def decode_token(self, token: str) -> Dict:
         try:

@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from app.middleware.auth     import AuthHandler
 from app.core.agent          import execute_agent
 from app.utils.error_handler import chat_error_handler
-import httpx
 import logging
 
 router = APIRouter()
@@ -12,25 +11,6 @@ auth_handler = AuthHandler()
 class ChatInput(BaseModel):
     message: str
     session_id: str
-    is_support: bool = False
-
-# URL para validar tokens de Google
-GOOGLE_TOKEN_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
-
-async def validate_google_token(token: str):
-    """Valida el token de Google y retorna la información del usuario"""
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(
-                GOOGLE_TOKEN_INFO_URL,
-                headers={"Authorization": f"Bearer {token}"}
-            )
-            if response.status_code != 200:
-                raise HTTPException(status_code=401, detail="Token de Google inválido")
-            return response.json()
-    except Exception as e:
-        logging.error(f"Error validando token de Google: {str(e)}")
-        raise HTTPException(status_code=401, detail="Token de Google inválido")
 
 @router.post("/chat")
 async def chat_endpoint(
@@ -42,7 +22,7 @@ async def chat_endpoint(
         
         if token_type.lower() == 'google':
             # Validar token de Google para usuarios de soporte
-            google_user = await validate_google_token(token)
+            google_user = await auth_handler.validate_google_token(token)
             logging.info(f"Usuario de soporte autenticado: {google_user.get('email')}")
             
             if not google_user.get('email', '').endswith('@advanpro.com.mx'):
