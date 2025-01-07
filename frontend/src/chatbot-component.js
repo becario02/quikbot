@@ -454,8 +454,7 @@ class ChatbotComponent extends HTMLElement {
         }
 
         #chat-header {
-          background: linear-gradient(135deg, var(--primary-color), #40a9ff);
-          color: var(--background-color);
+          color: var(--text-color);
           padding: 20px;
           font-weight: 600;
           font-size: 16px;
@@ -468,7 +467,7 @@ class ChatbotComponent extends HTMLElement {
         #chat-header .minimize-icon {
           width: 18px;
           height: 18px;
-          fill: var(--background-color);
+          fill: var(--text-color);
           transition: transform 0.3s ease;
         }
 
@@ -573,34 +572,30 @@ class ChatbotComponent extends HTMLElement {
         #input-container {
           display: flex;
           gap: 10px;
-          padding: 20px;
-          background-color: var(--secondary-color);
-          border-top: 1px solid rgba(0, 0, 0, 0.05);
+          margin: 20px;
+          padding: 5px;
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          border-radius: 12px;
         }
 
         #user-input {
           flex-grow: 1;
-          border: 2px solid rgba(0, 0, 0, 0.05);
+          border: 0px;
           border-radius: 12px;
-          padding: 12px 16px;
+          padding: 12px;
           font-size: 14px;
           outline: none;
           transition: all 0.3s ease;
           background: white;
         }
 
-        #user-input:focus {
-          border-color: var(--primary-color);
-          box-shadow: 0 0 0 3px rgba(0, 157, 224, 0.1);
-        }
-
         #send-button, #record-button {
           background: var(--primary-color);
           color: white;
           border: none;
-          border-radius: 12px;
-          width: 44px;
-          height: 44px;
+          border-radius: 8px;
+          width: 40px;
+          height: 40px;
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -615,8 +610,8 @@ class ChatbotComponent extends HTMLElement {
         }
 
         #send-button svg, #record-button svg {
-          width: 20px;
-          height: 20px;
+          width: 18px;
+          height: 18px;
           fill: white;
         }
 
@@ -725,7 +720,7 @@ class ChatbotComponent extends HTMLElement {
       </div>
       <div id="chat-container">
         <div id="chat-header">
-          <span>Asistente Virtual</span>
+          <span>Nova</span>
           <svg class="minimize-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 13H5v-2h14v2z"/>
           </svg>
