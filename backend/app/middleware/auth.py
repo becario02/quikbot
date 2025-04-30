@@ -39,3 +39,6 @@ class AuthHandler:
             )
         
         return authorization
+    
+    async def get_optional_auth_header(self, authorization: Optional[str] = Header(None)) -> Optional[str]:
+        return authorization  # Devuelve None si no existe, eso lo manejará el endpoint
