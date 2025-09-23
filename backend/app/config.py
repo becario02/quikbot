@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     QDRANT_URL: str
     QDRANT_API_KEY: str
     QDRANT_COLLECTION_NAME: str
+    QDRANT_VECTOR_NAME: str
     DATABASE_URL: str 
     BLOB_READ_WRITE_TOKEN: str
     NOTIFICATION_EMAIL: str

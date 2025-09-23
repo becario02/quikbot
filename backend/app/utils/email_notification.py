@@ -17,7 +17,7 @@ class EmailNotifier:
         try:
             message = MIMEMultipart()
             message["From"] = self.sender_email
-            message["To"] = "enriquev@advanpro.com.mx"
+            message["To"] = "alexis_l@advanpro.com.mx"
             message["Subject"] = "⚠️ ALERTA: Cuota de OpenAI Excedida"
 
             html = f"""

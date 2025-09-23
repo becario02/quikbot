@@ -1,7 +1,5 @@
-from langchain.vectorstores import Qdrant
-from langchain_openai import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.agents.agent_toolkits import VectorStoreInfo, VectorStoreToolkit
+from langchain_community.vectorstores import Qdrant
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.agents import Tool
 from qdrant_client import QdrantClient
 from app.config import settings
@@ -45,7 +43,8 @@ async def get_vectorstore_toolkit(description: Optional[str] = None):
     vectorstore = Qdrant(
         client=client,
         collection_name=settings.QDRANT_COLLECTION_NAME,
-        embeddings=embeddings
+        embeddings=embeddings,
+        vector_name=settings.QDRANT_VECTOR_NAME
     )
 
     # Crear herramienta de búsqueda personalizada

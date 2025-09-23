@@ -1,7 +1,8 @@
 import os
 import tempfile
 import asyncio
-from langchain.document_loaders import PyPDFLoader, Docx2txtLoader, UnstructuredPowerPointLoader
+from urllib.parse import unquote
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, UnstructuredPowerPointLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Qdrant
@@ -15,42 +16,37 @@ async def delete_file_vectors_async(blob_url: str):
 
 def delete_file_vectors(blob_url: str):
     try:
-        # Inicializar el cliente de Qdrant
         client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
 
-        # Construir el filtro para encontrar todos los puntos relacionados con el archivo
+        normalized_url = unquote(blob_url)
+
         filter_condition = models.Filter(
             must=[
                 models.FieldCondition(
                     key="metadata.blob_url",
-                    match=models.MatchValue(value=blob_url)
+                    match=models.MatchValue(value=normalized_url)
                 )
             ]
         )
 
-        # Primero, obtener los IDs de los puntos que coinciden con el filtro
         search_result = client.scroll(
             collection_name=settings.QDRANT_COLLECTION_NAME,
             scroll_filter=filter_condition,
-            limit=100,  # Ajusta según tus necesidades
+            limit=100,
             with_payload=True,
             with_vectors=False
         )
 
-        # Extraer los IDs de los puntos encontrados
         point_ids = [point.id for point in search_result[0]]
 
         if point_ids:
-            # Eliminar los puntos encontrados
             client.delete(
                 collection_name=settings.QDRANT_COLLECTION_NAME,
-                points_selector=models.PointIdsList(
-                    points=point_ids
-                )
+                points_selector=models.PointIdsList(points=point_ids)
             )
-            print(f"Eliminados {len(point_ids)} vectores asociados al archivo {blob_url}")
+            print(f"Eliminados {len(point_ids)} vectores asociados al archivo {normalized_url}")
         else:
-            print(f"No se encontraron vectores asociados al archivo {blob_url}")
+            print(f"No se encontraron vectores asociados al archivo {normalized_url}")
 
     except Exception as e:
         print(f"Error al eliminar vectores del archivo {blob_url}: {str(e)}")
@@ -79,13 +75,13 @@ def process_and_vectorize_file(file_content, file_name, blob_url):
 
         documents = loader.load()
 
-        # Actualizar los metadatos de cada documento para incluir la URL real del blob
+        normalized_url = unquote(blob_url)
+
         for doc in documents:
             doc.metadata.update({
                 'source': file_name,
-                'blob_url': blob_url  # Usar la URL real del blob
+                'blob_url': normalized_url
             })
-            # Si el documento tiene número de página, mantenerlo
             if 'page' in doc.metadata:
                 doc.metadata['page'] = doc.metadata['page']
 
@@ -101,6 +97,7 @@ def process_and_vectorize_file(file_content, file_name, blob_url):
             url=settings.QDRANT_URL,
             api_key=settings.QDRANT_API_KEY,
             collection_name=settings.QDRANT_COLLECTION_NAME,
+            vector_name=settings.QDRANT_VECTOR_NAME,
             force_recreate=False
         )
 
